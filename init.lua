@@ -84,6 +84,9 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+local map = vim.api.nvim_set_keymap
+local opt = { noremap = true, silent = true }
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -178,7 +181,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 --
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -326,6 +329,7 @@ require('lazy').setup({
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>o', group = '[O]pen' },
       },
     },
   },
@@ -959,3 +963,22 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- NOTE: window operations
+map('n', 's', '', opt)
+map('n', 'sv', ':vsp<CR>', opt)
+map('n', 'sh', ':sp<CR>', opt)
+map('n', 'sc', '<C-w>c', opt)
+map('n', 'so', '<C-w>o', opt)
+map('n', '<A-h>', '<C-w>h', opt)
+map('n', '<A-j>', '<C-w>j', opt)
+map('n', '<A-k>', '<C-w>k', opt)
+map('n', '<A-l>', '<C-w>l', opt)
+
+-- Terminal相关
+map('n', 'o', '', opt)
+map('n', '<leader>ot', ':terminal<CR>', opt)
+map('t', '<A-h>', [[ <C-\><C-N><C-w>h ]], opt)
+map('t', '<A-j>', [[ <C-\><C-N><C-w>j ]], opt)
+map('t', '<A-k>', [[ <C-\><C-N><C-w>k ]], opt)
+map('t', '<A-l>', [[ <C-\><C-N><C-w>l ]], opt)
