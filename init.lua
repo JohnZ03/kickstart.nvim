@@ -95,7 +95,7 @@ vim.g.maplocalleader = ' '
 
 --  NOTE: Use the following 'if' statement to apply lua only for neovide
 if vim.g.neovide then
-  vim.o.guifont = 'JetBrainsMonoNL Nerd Font:h14'
+  vim.o.guifont = 'JetBrainsMonoNL Nerd Font:h12'
 end
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
@@ -656,7 +656,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'verible',
+        -- 'verible',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -791,6 +791,7 @@ require('lazy').setup({
           -- you can uncomment the following lines
           --['<CR>'] = cmp.mapping.confirm { select = true },
           --['<Tab>'] = cmp.mapping.select_next_item(),
+          ['<Tab>'] = cmp.mapping.confirm({ select = true }),  -- Accept the current completion
           --['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
           -- Manually trigger a completion from nvim-cmp.
@@ -986,19 +987,31 @@ map('t', '<A-l>', [[ <C-\><C-N><C-w>l ]], opt)
 
 -- https://www.reddit.com/r/Verilog/comments/1f6cjd5/adding_systemverilog_and_verilog_support_to_neovim/
 -- Create an event handler for the FileType autocommand
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = {'verilog', 'systemverilog'},
-  callback = function()
-    vim.lsp.start({
-      name = 'verible',
-      cmd = {'verible-verilog-ls', '--rules_config_search'},
-    })
-  end,
-})
+-- vim.api.nvim_create_autocmd('FileType', {
+--   pattern = {'verilog', 'systemverilog'},
+--   callback = function()
+--     vim.lsp.start({
+--       name = 'verible',
+--       cmd = {'verible-verilog-ls', '--rules_config_search'},
+--     })
+--   end,
+-- })
 
-vim.api.nvim_create_autocmd("BufWritePost", {
-  pattern = "*.v",
-  callback = function()
-    vim.lsp.buf.format({ async = false })
-  end
-})
+-- vim.api.nvim_create_autocmd("BufWritePost", {
+--   pattern = "*.v",
+--   callback = function()
+--     vim.lsp.buf.format({ async = false })
+--   end
+-- })
+
+-- Enable Veridian
+local lspconfutil = require 'lspconfig/util'
+local root_pattern = lspconfutil.root_pattern("veridian.yml", ".git")
+require('lspconfig').veridian.setup {
+    cmd = { '/home/zhuhaot2/Apps/veridian/veridian' },
+    root_dir = function(fname)
+        local filename = lspconfutil.path.is_absolute(fname) and fname
+        or lspconfutil.path.join(vim.loop.cwd(), fname)
+        return root_pattern(filename) or lspconfutil.path.dirname(filename)
+    end;
+}
