@@ -656,7 +656,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        -- 'verible',
+        'verible',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -987,22 +987,22 @@ map('t', '<A-l>', [[ <C-\><C-N><C-w>l ]], opt)
 
 -- https://www.reddit.com/r/Verilog/comments/1f6cjd5/adding_systemverilog_and_verilog_support_to_neovim/
 -- Create an event handler for the FileType autocommand
--- vim.api.nvim_create_autocmd('FileType', {
---   pattern = {'verilog', 'systemverilog'},
---   callback = function()
---     vim.lsp.start({
---       name = 'verible',
---       cmd = {'verible-verilog-ls', '--rules_config_search'},
---     })
---   end,
--- })
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = {'verilog', 'systemverilog'},
+  callback = function()
+    vim.lsp.start({
+      name = 'verible',
+      cmd = {'verible-verilog-ls', '--rules_config_search'},
+    })
+  end,
+})
 
--- vim.api.nvim_create_autocmd("BufWritePost", {
---   pattern = "*.v",
---   callback = function()
---     vim.lsp.buf.format({ async = false })
---   end
--- })
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = "*.v",
+  callback = function()
+    vim.lsp.buf.format({ async = false })
+  end
+})
 
 -- Enable Veridian
 local lspconfutil = require 'lspconfig/util'
