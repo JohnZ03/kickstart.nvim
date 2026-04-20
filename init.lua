@@ -737,7 +737,8 @@ require('lazy').setup({
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for ts_ls)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
+            vim.lsp.config(server_name, server)
+            vim.lsp.enable(server_name)
           end,
         },
       }
@@ -969,7 +970,7 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    main = 'nvim-treesitter', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
@@ -1084,11 +1085,12 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 -- Enable Veridian
 local lspconfutil = require 'lspconfig/util'
 local root_pattern = lspconfutil.root_pattern("veridian.yml", ".git")
-require('lspconfig').veridian.setup {
+vim.lsp.config('veridian', {
     cmd = { '/home/zhuhaot2/Apps/veridian/veridian' },
     root_dir = function(fname)
         local filename = lspconfutil.path.is_absolute(fname) and fname
         or lspconfutil.path.join(vim.loop.cwd(), fname)
         return root_pattern(filename) or lspconfutil.path.dirname(filename)
     end;
-}
+})
+vim.lsp.enable('veridian')
