@@ -388,6 +388,29 @@ require('lazy').setup({
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
+      local ok_parsers, ts_parsers = pcall(require, 'nvim-treesitter.parsers')
+      if ok_parsers and type(ts_parsers.ft_to_lang) ~= 'function' and vim.treesitter and vim.treesitter.language then
+        ts_parsers.ft_to_lang = function(ft)
+          return vim.treesitter.language.get_lang(ft) or ft
+        end
+      end
+
+      local ok_configs, ts_configs = pcall(require, 'nvim-treesitter.configs')
+      if not ok_configs or type(ts_configs) ~= 'table' then
+        ts_configs = {}
+        package.loaded['nvim-treesitter.configs'] = ts_configs
+      end
+      if type(ts_configs.is_enabled) ~= 'function' then
+        ts_configs.is_enabled = function()
+          return false
+        end
+      end
+      if type(ts_configs.get_module) ~= 'function' then
+        ts_configs.get_module = function()
+          return {}
+        end
+      end
+
       -- Telescope is a fuzzy finder that comes with a lot of different things that
       -- it can fuzzy find! It's more than just a "file finder", it can search
       -- many different aspects of Neovim, your workspace, LSP, and more!
